@@ -1,4 +1,3 @@
-import functools
 import math
 
 
@@ -12,9 +11,7 @@ def my_round(num: float) -> int:
 
 
 def count_failed_students(student_scores: list[int]) -> int:
-    return functools.reduce(
-        lambda count, score: count if score > 40 else count + 1, student_scores, 0
-    )
+    return sum(score for score in student_scores if score > 40)
 
 
 def above_threshold(student_scores: list[int], threshold: int) -> list[int]:
