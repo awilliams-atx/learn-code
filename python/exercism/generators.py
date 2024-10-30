@@ -1,22 +1,27 @@
+"""
+https://exercism.org/tracks/python/exercises/plane-tickets
+"""
+
 import itertools
 from typing import Generator
 
+LETTERS = "ABCD"
+
 
 def generate_seat_letters(number: int) -> Generator[str, None, None]:
-    letter_cyler = itertools.cycle("ABCD")
-    for _ in range(number):
-        yield next(letter_cyler)
+    yield from itertools.islice(itertools.cycle(LETTERS), number)
 
 
 def generate_seats(seat_count: int) -> Generator[str, None, None]:
-    letter_generator = generate_seat_letters(seat_count)
-    row_numbers = (num for num in itertools.count(start=1) if num != 13)
-    row_number = 0
-    for _ in range(seat_count):
-        letter = next(letter_generator)
-        if letter == "A":
-            row_number = next(row_numbers)
-        yield f"{str(row_number)}{letter}"
+    yield from itertools.islice(
+        (
+            f"{row_number}{letter}"
+            for row_number in itertools.count(1)
+            for letter in LETTERS
+            if row_number != 13
+        ),
+        seat_count,
+    )
 
 
 def assign_seats(passengers: list[str]) -> dict[str, str]:
@@ -26,5 +31,7 @@ def assign_seats(passengers: list[str]) -> dict[str, str]:
 def generate_codes(
     seat_numbers: list[str], flight_id: str
 ) -> Generator[str, None, None]:
-    for number in seat_numbers:
-        yield f"{number}{flight_id}".ljust(12, "0")
+    yield from map(
+        lambda num: f"{num}{flight_id}".ljust(12, "0"),
+        seat_numbers,
+    )
